@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<title>Ақылды қала — Атырау</title>
+
+<!-- Leaflet карта кітапханасы -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<style>
+body {
+    font-family: Arial;
+    margin: 0;
+}
+
+#map {
+    height: 80vh;
+}
+
+/* Түсті нүктелер */
+.green {
+    background: green;
+}
+
+.red {
+    background: red;
+}
+
+.yellow {
+    background: yellow;
+}
+
+.marker {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+}
+
+/* Панель */
+.panel {
+    padding: 10px;
+    background: #f0f0f0;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2 style="text-align:center">
+🌍 Атырау — Ақылды Қоқыс Жүйесі
+</h2>
+
+<div id="map"></div>
+
+<div class="panel">
+
+<h3>Қоқыс жәшігін қосу</h3>
+
+<label>Статус таңда:</label>
+
+<select id="status">
+<option value="green">🟢 Бос орын бар</option>
+<option value="red">🔴 Толып кеткен</option>
+<option value="yellow">🟡 Қайта өңдеу</option>
+</select>
+
+<br><br>
+
+<label>Фото жүктеу:</label>
+<input type="file" id="photo">
+
+<p>
+Картада бас — жаңа жәшік қосылады.
+</p>
+
+<hr>
+
+<h3>🚦 Қала жағдайы</h3>
+
+<p id="traffic">
+🚗 Көлік кептелісі: Жүктелуде...
+</p>
+
+<p id="air">
+🌫 Ауа сапасы: Жүктелуде...
+</p>
+
+</div>
+
+<script>
+
+/* Атырау координаттары */
+var map = L.map('map').setView([47.0945, 51.9237], 13);
+
+/* Карта */
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+}).addTo(map);
+
+
+/* Маркер жасау функциясы */
+
+function createMarker(lat, lng, status){
+
+    var colorClass = status;
+
+    var icon = L.divIcon({
+        className: '',
+        html: `<div class="marker ${colorClass}"></div>`
+    });
+
+    L.marker([lat, lng], {
+        icon: icon
+    }).addTo(map);
+
+}
+
+
+/* Картаға басқанда қосу */
+
+map.on('click', function(e){
+
+    var status =
+        document.getElementById("status").value;
+
+    createMarker(
+        e.latlng.lat,
+        e.latlng.lng,
+        status
+    );
+
+});
+
+
+/* Жасанды интеллект симуляциясы */
+
+function updateTraffic(){
+
+    var trafficText =
+        ["Төмен",
+         "Орташа",
+         "Жоғары"];
+
+    var random =
+        trafficText[
+            Math.floor(
+                Math.random()*3
+            )
+        ];
+
+    document.getElementById("traffic")
+        .innerHTML =
+        "🚗 Көлік кептелісі: "
+        + random;
+
+}
+
+function updateAir(){
+
+    var airText =
+        ["Жақсы",
+         "Орташа",
+         "Нашар"];
+
+    var random =
+        airText[
+            Math.floor(
+                Math.random()*3
+            )
+        ];
+
+    document.getElementById("air")
+        .innerHTML =
+        "🌫 Ауа сапасы: "
+        + random;
+
+}
+
+/* Әр 5 секунд жаңарту */
+
+setInterval(updateTraffic, 5000);
+setInterval(updateAir, 5000);
+
+</script>
+
+</body>
+</html>
